@@ -565,6 +565,8 @@ def opt_mintime(reftrack: np.ndarray,
     w.append(Xk)
     n_min = (-w_tr_right_interp(0) + pars["optim_opts"]["width_opt"] / 2) / n_s
     n_max = (w_tr_left_interp(0) - pars["optim_opts"]["width_opt"] / 2) / n_s
+    n_min = n_min.__float__()
+    n_max = n_max.__float__()
     if pars["pwr_params_mintime"]["pwr_behavior"]:
         lbw.append([v_min, beta_min, omega_z_min, n_min, xi_min,
                     machine.temp_min, batt.temp_min, inverter.temp_min,
@@ -664,7 +666,7 @@ def opt_mintime(reftrack: np.ndarray,
             # add contribution to scaling factor (for calculating lap time)
             sf_opt.append(B[j] * qj * h[k])
 
-        # calculate used energy 
+        # calculate used energy
         dt_opt.append(sf_opt[0] + sf_opt[1] + sf_opt[2])
         if pars["pwr_params_mintime"]["pwr_behavior"]:
             # Add battery output power [kW] and battery loss power [kW] to retireve entire system power [W] and
@@ -678,6 +680,8 @@ def opt_mintime(reftrack: np.ndarray,
         w.append(Xk)
         n_min = (-w_tr_right_interp(k + 1) + pars["optim_opts"]["width_opt"] / 2.0) / n_s
         n_max = (w_tr_left_interp(k + 1) - pars["optim_opts"]["width_opt"] / 2.0) / n_s
+        n_min = n_min.__float__()
+        n_max = n_max.__float__()
         if pars["pwr_params_mintime"]["pwr_behavior"]:
             lbw.append([v_min, beta_min, omega_z_min, n_min, xi_min,
                         machine.temp_min, batt.temp_min, inverter.temp_min,
