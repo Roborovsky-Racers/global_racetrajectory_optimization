@@ -1,9 +1,11 @@
 #! /usr/bin/env python3
 
-from typing import List, Dict
+from typing import Dict
 import os
+import argparse
 import pandas as pd
 import xml.etree.ElementTree as ET
+
 
 def extract_ways_from_osm(osm_path: str) -> Dict[str, pd.DataFrame]:
   print("loading osm from: ", osm_path)
@@ -11,7 +13,6 @@ def extract_ways_from_osm(osm_path: str) -> Dict[str, pd.DataFrame]:
   root = tree.getroot()
 
   ways_info = {member.attrib["role"]: member.attrib["ref"] for member in root.findall(".//relation/member")}
-  print("ways: ", ways_info)
 
   # ノードIDをキーにlocal_x, local_y, eleを格納する辞書を作成
   nodes = {}
@@ -40,13 +41,22 @@ def extract_ways_from_osm(osm_path: str) -> Dict[str, pd.DataFrame]:
 
   return dfs
 
-def write_csv(dfs: Dict[str, pd.DataFrame]):
+def write_csv(dfs: Dict[str, pd.DataFrame], directory: str):
   for role, df in dfs.items():
-    output_path = os.path.join("./" + role + "_lane_bound.csv")
+    output_path = os.path.join(directory + "/" + role + "_lane_bound.csv")
     df.to_csv(output_path, index=False)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+  parser = argparse.ArgumentParser()
+  parser.add_argument("osm_filename", help="osm file name in resources/osm")
+  args = parser.parse_args()
+
   this_dir = os.path.dirname(os.path.abspath(__file__))
-  osm_path = this_dir + "/resources/osm/city_circuit_lanelet2_roborovsky.osm"
+  osm_path = this_dir + "/../resources/osm/" + args.osm_filename
   dfs = extract_ways_from_osm(osm_path)
-  write_csv(dfs)
+
+  # resources/bounds/args.osm_filename が存在しない場合は生成
+  bounds_dir = this_dir + "/../resources/bounds/" + args.osm_filename.split(".")[0]
+  if not os.path.exists(bounds_dir):
+    os.makedirs(bounds_dir)
+  write_csv(dfs, bounds_dir)
