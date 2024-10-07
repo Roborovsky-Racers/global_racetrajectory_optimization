@@ -23,10 +23,10 @@ def search_nearest_index(x, y, bound_map_x, bound_map_y, index=0, window_len=10)
             min_index = i
     return min_index
 
-def calc_width(x, y, bound_x, bound_y):
-    return np.sqrt((x - bound_x)**2 + (y - bound_y)**2)
+def calc_dist(x1, y1, x2, y2):
+    return np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-def calculate_center_line(outer_track_df, inner_track_df, limit=10, skip=5):
+def calculate_center_line(outer_track_df, inner_track_df, window_len=10, min_dist_between_points = 0.1, width_margin=0.3):
     # Calculate the center line
     outer_track_x = list(outer_track_df["x"])
     outer_track_y = list(outer_track_df["y"])
@@ -37,8 +37,9 @@ def calculate_center_line(outer_track_df, inner_track_df, limit=10, skip=5):
     w_tr_right_m = []
     w_tr_left_m = []
     nearest_index = 0
-    for i in range(0, len(outer_track_x), skip):
-        nearest_index = search_nearest_index(outer_track_x[i], outer_track_y[i], inner_track_x, inner_track_y, nearest_index, limit)
+    for i in range(len(outer_track_x)):
+        nearest_index = search_nearest_index(
+            outer_track_x[i], outer_track_y[i], inner_track_x, inner_track_y, nearest_index, window_len)
 
         # Calculate the center line
         if nearest_index > len(inner_track_x) - 1:
