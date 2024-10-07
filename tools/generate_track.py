@@ -11,12 +11,12 @@ import pandas as pd
 import argparse
 import matplotlib.pyplot as plt
 
-def search_nearest_index(x, y, bound_map_x, bound_map_y, index=0, limit=10):
+def search_nearest_index(x, y, bound_map_x, bound_map_y, index=0, window_len=10):
     min_dist = 1000000
     min_index = index
     bound_map_x = bound_map_x + bound_map_x
     bound_map_y = bound_map_y + bound_map_y
-    for i in range(index - limit, index + limit):
+    for i in range(index, index + window_len):
         dist = np.sqrt((x - bound_map_x[i])**2 + (y - bound_map_y[i])**2)
         if dist < min_dist:
             min_dist = dist
