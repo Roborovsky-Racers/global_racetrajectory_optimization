@@ -43,11 +43,15 @@ def calculate_center_line(outer_track_df, inner_track_df, limit=10, skip=5):
         # Calculate the center line
         if nearest_index > len(inner_track_x) - 1:
             nearest_index -= len(inner_track_x)
-        center_x.append((outer_track_x[i] + inner_track_x[nearest_index]) / 2)
-        center_y.append((outer_track_y[i] + inner_track_y[nearest_index]) / 2)
-        width = calc_width(outer_track_x[i], outer_track_y[i], inner_track_x[nearest_index], inner_track_y[nearest_index])
-        w_tr_right_m.append((width/2)-0.3)
-        w_tr_left_m.append((width/2)-0.3)
+
+        cx = (outer_track_x[i] + inner_track_x[nearest_index]) / 2.
+        cy = (outer_track_y[i] + inner_track_y[nearest_index]) / 2.
+
+        if len(center_x) > 0 and calc_dist(center_x[-1], center_y[-1], cx, cy) < min_dist_between_points:
+            continue
+
+        center_x.append(cx)
+        center_y.append(cy)
 
     return pd.DataFrame({
         "x_m": center_x,
